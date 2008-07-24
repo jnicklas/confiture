@@ -1,0 +1,21 @@
+name: tdstudent
+kind: rails
+
+cwd: /home/bork/rails/thing
+
+address: 127.0.0.1
+
+port: 8030
+servers: 3
+
+environment: production
+pid_file: log/mongrel.pid
+
+god: true
+
+host:
+  name: default
+  port: 80
+  domain: tensor.se
+  aliases:
+    - www.tensor.se

@@ -1,6 +1,6 @@
 module Confiture
 
-  class StubGenerator < Generator
+  class ConfigGenerator < Generator
     
     def self.source_root
       File.join(File.dirname(__FILE__), '..', '..', 'templates')
@@ -8,6 +8,8 @@ module Confiture
     
     glob!(nil, [])
     
-  end  
+  end
+  
+  add :config, ConfigGenerator
   
 end

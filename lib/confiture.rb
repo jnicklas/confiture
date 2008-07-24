@@ -1,9 +1,23 @@
+require 'rubygems'
 require 'templater'
 require 'yaml'
+require 'mash'
+
+dir = File.join(File.dirname(__FILE__), 'confiture/')
+
+require dir + 'cli'
+require dir + 'config'
+require dir + 'generators/base'
+require dir + 'generators/stub'
+require dir + 'generators/config'
 
 module Confiture
   
-  class UninitializedError < StandardError #:nodoc:
+  class ConfitureError < StandardError #:nodoc:
+  end
+  class UninitializedError < ConfitureError #:nodoc:
+  end
+  class ConfigError < ConfitureError #:nodoc:
   end
   
   extend self
@@ -13,21 +27,17 @@ module Confiture
   end
   
   def config
-    YAML.parse(File.read(File.join(Confiture.root, 'config.yml')))
+    Mash.new(YAML.parse(config_file))
   rescue Errno::ENOENT
     raise Confiture::UninitializedError, "the configuration has not been initialized, please run 'confiture init'"
   end
   
-  class Generator < Templater::Generator
-    
-    def self.source_root
-      Confiture.root
-    end
-    
+  def config_file
+    File.read(config_path)
+  end
+  
+  def config_path
+    File.join(Confiture.root, 'config.yml')
   end
   
 end
-
-dir = File.join(File.dirname(__FILE__), 'confiture/')
-
-require dir + 'stub_generator'

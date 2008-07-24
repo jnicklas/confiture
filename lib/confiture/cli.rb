@@ -10,7 +10,7 @@ module Confiture
       command = args.shift
       case command
       when "init"
-        Templater::CLI::Generator.run(...)
+        #Templater::CLI::Generator.run(...)
       end
     end
     

@@ -1,0 +1,30 @@
+name: tensor
+kind: rails
+
+cwd: /var/rails/tensor/current
+
+address: 127.0.0.1
+
+port: 8001
+servers: 3
+
+environment: production
+pid_file: log/mongrel.pid
+
+hosts:
+  -
+    name: default
+    port: 80
+    domain: tensor.se
+    aliases:
+      - www.tensor.se
+  -
+    name: secure
+    type: https
+    host: 192.45.34.12
+    port: 443
+    domain: secure.tensor.se
+    aliases:
+      - blah.tensor.se
+      - dorr.tensor.se
+      - gurr.tensor.se

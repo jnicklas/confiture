@@ -1,0 +1,19 @@
+name: tensor
+kind: merb
+
+cwd: /var/rails/tensor/current
+
+address: 127.0.0.1
+
+port: 8001
+servers: 3
+
+environment: production
+pid_file: log/mongrel.pid
+
+host:
+  name: default
+  port: 80
+  domain: tensor.se
+  aliases:
+    - www.tensor.se

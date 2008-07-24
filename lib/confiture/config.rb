@@ -1,55 +1,69 @@
 module Confiture
 
-  class Config < Hash
+  class Config
+    
+    attr_reader :conf
+        
     def self.load(yaml_file)
       self.new(YAML.load(yaml_file))
     end
     
-    def method_missing(method, *args)
-      if args.empty? and self.has_key?(method.to_s)
-        return self[method.to_s]
-      else
-        super
-      end
+    protected
+    
+    def method_missing(*args)
+      conf.send(*args)
     end
   end
 
   class AppConfig < Config
+    
+    REQUIRED_ATTRIBUTES = [:name]
   
-    def initialize(conf)
-      super(conf)
-      self["kind"] ||= "rails"
-      self["ports"] ||= ((self.port)..(self.port + self.servers - 1)).to_a if self["port"]
-      self["uid"] ||= self["name"]
-      self["gid"] ||= self["name"]
-      self["cwd"] ||= APP_ROOT + '/' + self["name"] + "/current"
-      self["docroot"] ||= self["cwd"] + "/public"
-      self["address"] ||= "127.0.0.1"
-      self["balancer_name"] ||= "balancer://#{self.name}_cluster"
+    def initialize(conf = {})
+      @conf = Mash.new(conf)
+      REQUIRED_ATTRIBUTES.each do |attribute|
+        raise Confiture::ConfigError, "required attribute '#{attribute}' not given" unless @conf[attribute]
+      end
       
-      self["hosts"] ||= []
-      self["hosts"] = self["hosts"].map { |host| HostConfig.new(self, host) }
-      self["hosts"] << HostConfig.new(self, self["host"]) if self["host"]
+      @conf.kind ||= "rails"
+      @conf.servers ||= 1
+      @conf.ports ||= ((@conf.port)..(@conf.port + @conf.servers - 1)).to_a if @conf.port
+      @conf.uid ||= @conf.name
+      @conf.gid ||= @conf.name
+      
+      @conf.cwd ||= Confiture.config.app_root + '/' + @conf.name + "/current"
+      @conf.docroot ||= @conf.cwd + "/public"
+      @conf.address ||= "127.0.0.1"
+      @conf.balancer_name ||= "balancer://#{@conf.name}_cluster"
+      
+      @conf.hosts ||= []
+      @conf.hosts = @conf.hosts.map { |host| HostConfig.get(@conf, host) }
+      @conf.hosts << HostConfig.get(@conf, @conf.host) if @conf.host
     end
   
   end
   
   class HostConfig < Config
   
+    attr_reader :app_conf
+  
     def initialize(app_conf, conf)
-      super(conf)
-
-      self["name"] ||= "default"
-      self["host"] ||= "*"
-      self["port"] ||= 80
-      self["kind"] ||= "http"
-      self["aliases"] ||= []
-
-      self["error_log"] ||= "#{APACHE_LOG_ROOT}/#{self.app_conf.name}_#{self.name}_errors.log"
-      self["log"] ||= "#{APACHE_LOG_ROOT}/#{self.app_conf.name}_#{self.name}.log"
-
-      self["cert_file"] ||= "#{APACHE_SSL_ROOT}/#{self.app_conf.name}.crt"
-      self["key_file"] ||= "#{APACHE_SSL_ROOT}/#{self.app_conf.name}.key"
+      @conf = Mash.new(conf)
+      @app_conf = Mash.new(app_conf)
+      
+      @conf.name ||= "default"
+      @conf.host ||= "*"
+      @conf.port ||= 80
+      @conf.kind ||= "http"
+      @conf.aliases ||= []
+      
+      @conf.error_log ||= "#{APACHE_LOG_ROOT}/#{@app_conf.name}_#{@conf.name}_errors.log"
+      @conf.log ||= "#{APACHE_LOG_ROOT}/#{@app_conf.name}_#{@conf.name}.log"
+      
+      @conf.cert_file ||= "#{APACHE_SSL_ROOT}/#{@app_conf.name}.crt"
+      @conf.key_file ||= "#{APACHE_SSL_ROOT}/#{@app_conf.name}.key"
+      
+      @conf = conf
     end
   
   end

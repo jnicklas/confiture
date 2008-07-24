@@ -1,0 +1,95 @@
+Confiture
+=========
+
+Generate config files for your applications. Start with an easy to edit yml file and have confiture generate for example Apache or God config files for you.
+
+    git clone git://github.com/jnicklas/confiture.git 
+    cd confiture
+    rake package
+    sudo gem install pkg/confiture*
+
+You should generate your personal stub of templates, these can then be adapted to fit your needs
+
+    confiture init
+    
+Edit the /etc/confiture/config.yml file, and point it to where you want your config files to be located.
+
+Confiture will by default look for config files in:
+
+    /var/app/you_app_name/app.yml
+    
+so create an app.yml file in that directory. The syntax for this file is documented below. You might want to symlink it from your app if you use capistrano:
+
+    ln -s /var/app/your_app_name/current/config/deploy.yml /var/app/your_app_name/app.yml
+    
+You can now use confiture to update you configuration files:
+
+    confiture your_app_name
+
+or if you only want to update selected config files:
+
+    confiture your_app_name apache
+    confiture your_app_name god
+
+if the config files already exist, confiture will ask you what you want to do, if you are using confiture non-interactively (via capistrano for example) you might want to specify the -f option to override files without asking:
+
+    confiture your_app_name -f
+
+
+Config File Syntax
+------------------
+
+Config files are in YAML format, and the syntax is compatible with those used by mongrel_cluster, so you can actually point your mongrel cluster at this file and run it as the configuration:
+
+    name: tensor
+    kind: rails
+
+    cwd: /var/rails/tensor/current
+
+    address: 127.0.0.1
+
+    port: 8001
+    servers: 3
+
+    environment: production
+    pid_file: log/mongrel.pid
+
+    host:
+      name: default
+      port: 80
+      domain: tensor.se
+      aliases:
+        - www.tensor.se
+
+Name is a required parameter, kind is assumed to be 'rails' when not set. Multiple hosts can be specified like this:
+
+    name: tensor
+    kind: rails
+
+    cwd: /var/rails/tensor/current
+
+    address: 127.0.0.1
+
+    port: 8001
+    servers: 3
+
+    environment: production
+    pid_file: log/mongrel.pid
+
+    hosts:
+      -
+        name: default
+        port: 80
+        domain: tensor.se
+        aliases:
+          - www.tensor.se
+      -
+        name: secure
+        type: https
+        host: 192.45.34.12
+        port: 443
+        domain: secure.tensor.se
+        aliases:
+          - blah.tensor.se
+          - dorr.tensor.se
+          - gurr.tensor.se
