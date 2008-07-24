@@ -1,0 +1,2 @@
+apache_config_dir: '/etc/apache2/sites-available'
+god_config_dir: '/etc/god'
