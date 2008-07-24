@@ -1,2 +1,5 @@
 apache_config_dir: '/etc/apache2/sites-available'
+apache_log_dir: '/var/log/apache2'
+apache_ssl_dir: '/etc/apache2/ssl'
 god_config_dir: '/etc/god'
+app_dir: '/var/app'
