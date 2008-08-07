@@ -14,6 +14,23 @@ module Confiture
       end
     end
     
+    def init
+      
+    end
+    
+    def list
+      puts "***************"
+      Confiture.available_apps.each do |name|
+        puts " -> #{name}"
+      end
+    end
+    
+    protected
+    
+    def find
+      #Dir.glob()
+    end
+    
   end
   
 end
