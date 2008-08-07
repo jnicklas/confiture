@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'templater'
 require 'yaml'
-require 'extlib'
+require 'mash'
 
 module Confiture
   
