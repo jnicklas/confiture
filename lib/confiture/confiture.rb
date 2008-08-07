@@ -7,7 +7,7 @@ module Confiture
   end
   
   def config
-    Mash.new(YAML.parse(config_file))
+    Mash.new(YAML.load(config_file))
   rescue Errno::ENOENT
     raise Confiture::UninitializedError, "the configuration has not been initialized, please run 'confiture init'"
   end
