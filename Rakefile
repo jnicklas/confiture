@@ -22,7 +22,7 @@ spec = Gem::Specification.new do |s|
   s.email = EMAIL
   s.homepage = HOMEPAGE
   s.add_dependency('templater', '>= 0.1.1')
-  s.add_dependency('mash', '>= 0.3.0')
+  s.add_dependency('extlib')
   s.require_path = 'lib'
   s.files = %w(LICENSE README Rakefile TODO) + Dir.glob("{lib,spec,bin}/**/*")
   s.bindir = "bin"
